@@ -9,6 +9,8 @@ import InnholdIkkeStandard from './innhold-ikke-standard';
 import InnholdSituasjonsbestemt from './innhold-situasjonsbestemt';
 import { ER_STANDARD_INNSATSGRUPPE_URL } from '../ducks/api';
 import sjekkOmBrukerErSituasjonsbestemtInnsatsgruppe from '../lib/er-situasjonsbestemt-innsatsgruppe';
+import { FeatureToggles, useFeatureToggleData } from '../contexts/feature-toggles';
+import InnholdAutomatiskReaktivert from './InnholdAutomatiskReaktivert';
 
 function ArbeidssokerInnhold() {
     const underOppfolging = useUnderOppfolging()?.underoppfolging;
@@ -22,7 +24,13 @@ function ArbeidssokerInnhold() {
         oppfolgingData,
     });
 
+    const featureToggles = useFeatureToggleData();
+
     if (erStandard === undefined && !error) return null;
+
+    if (featureToggles[FeatureToggles.BRUK_BEKREFT_REAKTIVERING]) {
+        return <InnholdAutomatiskReaktivert />;
+    }
 
     if (underOppfolging && innloggingsnivaa === InnloggingsNiva.LEVEL_4 && erStandard) {
         return <InnholdStandard />;
