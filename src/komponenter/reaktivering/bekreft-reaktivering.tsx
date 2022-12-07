@@ -1,9 +1,20 @@
 import { BodyLong, Button, Heading, Panel } from '@navikt/ds-react';
-import spacingStyles from '../../spacing.module.css';
-import flexStyles from '../../flex.module.css';
 import { Success } from '@navikt/ds-icons';
 
+import { useAmplitudeData } from '../hent-initial-data/amplitude-provider';
+
+import { loggAktivitet } from '../../metrics/metrics';
+
+import spacingStyles from '../../spacing.module.css';
+import flexStyles from '../../flex.module.css';
+
 const BekreftReaktivering = () => {
+    const { amplitudeData } = useAmplitudeData();
+
+    function handleBekreftetValg(valg: string) {
+        loggAktivitet({ aktivitet: `Avklarer reaktivering med: ${valg}`, ...amplitudeData });
+    }
+
     return (
         <Panel className={`${spacingStyles.px1_5}`}>
             <div className={flexStyles.flex}>
@@ -32,13 +43,19 @@ const BekreftReaktivering = () => {
                         Er dette riktig at du fortsatt ønsker å være registrert?
                     </BodyLong>
                     <div className={spacingStyles.mb1}>
-                        <Button variant={'primary'}>Ja, jeg ønsker å være registrert</Button>
+                        <Button variant={'primary'} onClick={() => handleBekreftetValg('Vil være registrert')}>
+                            Ja, jeg ønsker å være registrert
+                        </Button>
                     </div>
                     <div className={spacingStyles.mb1}>
-                        <Button variant={'secondary'}>Nei, jeg ønsker ikke å være registrert</Button>
+                        <Button variant={'secondary'} onClick={() => handleBekreftetValg('Vil IKKE være registrert')}>
+                            Nei, jeg ønsker ikke å være registrert
+                        </Button>
                     </div>
                     <div>
-                        <Button variant={'tertiary'}>Vet ikke</Button>
+                        <Button variant={'tertiary'} onClick={() => handleBekreftetValg('Vet ikke')}>
+                            Vet ikke
+                        </Button>
                     </div>
                 </div>
             </div>
